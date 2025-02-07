@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
 import { sessionMiddleware } from "@/lib/session-middleware";
-import { DATABASE_ID, IMAGES_BUCKET_ID, MEMBERS_ID, TASKS_ID, WORKSPACES_ID } from "@/config";
+import { DATABASE_ID, IMAGES_BUCKET_ID, MEMBERS_ID, PROJECTS_ID, TASKS_ID, WORKSPACES_ID } from "@/config";
 import { ID, Query } from "node-appwrite";
 import { MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
@@ -190,36 +190,60 @@ const app = new Hono()
             return c.json({data: workspace});
         },
     )
-
-    .delete(
-        "/:workspaceId",
-        sessionMiddleware,
-        async (c) => {
-            const databases = c.get("databases");
-            const user = c.get("user");
-
-            const { workspaceId } = c.req.param();
-
-            const member = await getMember({
-				databases,
-				workspaceId,
-				userId: user.$id,
-			});
-
-            if(!member || member.role !== MemberRole.ADMIN){
-               return c.json({error: "Unauthorized"}, 401); 
-            }
-            
-            //TODO: DELETE MEMBERS, PROJECTS AND TASKS
-            await databases.deleteDocument(
-                DATABASE_ID,
-                WORKSPACES_ID,
-                workspaceId,
-            );
-
-            return c.json({data: {$id: workspaceId}});
+    .delete("/:workspaceId", sessionMiddleware, async (c) => {
+        const databases = c.get("databases");
+        const user = c.get("user");
+        const { workspaceId } = c.req.param();
+    
+        const member = await getMember({
+            databases,
+            workspaceId,
+            userId: user.$id,
+        });
+    
+        if (!member || member.role !== MemberRole.ADMIN) {
+            return c.json({ error: "Unauthorized" }, 401);
         }
-    )
+    
+        try {
+            // Fetch projects belonging to the workspace
+            const projects = await databases.listDocuments(DATABASE_ID, PROJECTS_ID, [
+                Query.equal("workspaceId", workspaceId),
+            ]);
+    
+            for (const project of projects.documents) {
+                // Fetch tasks belonging to each project
+                const tasks = await databases.listDocuments(DATABASE_ID, TASKS_ID, [
+                    Query.equal("projectId", project.$id),
+                ]);
+    
+                // Delete all tasks within the project
+                for (const task of tasks.documents) {
+                    await databases.deleteDocument(DATABASE_ID, TASKS_ID, task.$id);
+                }
+    
+                // Delete the project itself
+                await databases.deleteDocument(DATABASE_ID, PROJECTS_ID, project.$id);
+            }
+    
+            // Delete workspace members
+            const members = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
+                Query.equal("workspaceId", workspaceId),
+            ]);
+    
+            for (const member of members.documents) {
+                await databases.deleteDocument(DATABASE_ID, MEMBERS_ID, member.$id);
+            }
+    
+            // Finally, delete the workspace
+            await databases.deleteDocument(DATABASE_ID, WORKSPACES_ID, workspaceId);
+    
+            return c.json({ data: { $id: workspaceId } });
+        } catch (error) {
+            return c.json({ error: "Failed to delete workspace", details: JSON.stringify(error) }, 500);
+        }
+    })
+    
 
     .post(
         "/:workspaceId/reset-invite-code",
@@ -238,7 +262,7 @@ const app = new Hono()
 			});
 
             if(!member || member.role !== MemberRole.ADMIN){
-               return c.json({error: "unauthorizedkkkkk"}, 401); 
+               return c.json({error: "unauthorized"}, 401); 
             }
             
             const workspace = await databases.updateDocument(

@@ -193,35 +193,55 @@ const app = new Hono()
    async (c) => {
        const databases = c.get("databases");
        const user = c.get("user");
-
        const { projectId } = c.req.param();
 
-       const existingProject = await databases.getDocument<Project>(
-         DATABASE_ID,
-         PROJECTS_ID,
-         projectId,
-      )
+       try {
+           // Fetch the existing project
+           const existingProject = await databases.getDocument<Project>(
+               DATABASE_ID,
+               PROJECTS_ID,
+               projectId,
+           );
 
-       const member = await getMember({
-       databases,
-       workspaceId: existingProject.workspaceId,
-       userId: user.$id,
-    });
+           if (!existingProject) {
+               return c.json({ error: "Project not found" }, 404);
+           }
 
-       if(!member){
-          return c.json({error: "Unauthorized"}, 401); 
+           // Check user permissions
+           const member = await getMember({
+               databases,
+               workspaceId: existingProject.workspaceId,
+               userId: user.$id,
+           });
+
+           if (!member) {
+               return c.json({ error: "Unauthorized" }, 401);
+           }
+
+           // Fetch tasks associated with the project
+           const tasks = await databases.listDocuments(DATABASE_ID, TASKS_ID, [
+               Query.equal("projectId", projectId),
+           ]);
+
+           // Delete all tasks related to the project
+           for (const task of tasks.documents) {
+               await databases.deleteDocument(DATABASE_ID, TASKS_ID, task.$id);
+           }
+
+           // Delete the project itself
+           await databases.deleteDocument(
+               DATABASE_ID,
+               PROJECTS_ID,
+               projectId,
+           );
+
+           return c.json({ data: { $id: projectId } });
+       } catch (error) {
+           return c.json({ error: "Failed to delete project", details: JSON.stringify(error) }, 500);
        }
-       
-       //TODO: DELETE TASKS
-       await databases.deleteDocument(
-           DATABASE_ID,
-           PROJECTS_ID,
-           projectId,
-       );
-
-       return c.json({data: {$id: existingProject.$id}});
    }
 )
+
 .get(
    "/:projectId/analytics",
    sessionMiddleware,
