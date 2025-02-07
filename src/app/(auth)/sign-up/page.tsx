@@ -9,7 +9,12 @@ const SignUpPage = async () => {
     
         if (user) redirect("/");
 
-    return <SignUpCard />
+    return (
+        <>
+            <head><title>Jira Clone | Sign Up</title></head>
+            <SignUpCard />
+        </>
+    );
 };
 
 export default SignUpPage;

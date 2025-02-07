@@ -7,7 +7,12 @@ const TaskIdPage = async () => {
    if(!user) redirect("/sign-in");
 
 
-   return <TaskIdClient/>;
+   return (
+      <>
+         <head><title>Jira Clone | Task Details</title></head>
+         <TaskIdClient/>
+      </>
+   );
 };
 
 export default TaskIdPage;

@@ -7,9 +7,12 @@ const WorkspaceIdMembersPage = async () => {
     if(!user) redirect("/sign-in");
 
     return (
-        <div className="w-full lg:max-w-xl">
-            <MembersList/>
-        </div>
+        <>
+            <head><title>Workspace Members</title></head>
+            <div className="w-full lg:max-w-xl">
+                <MembersList/>
+            </div>
+        </>
     );
 };
 

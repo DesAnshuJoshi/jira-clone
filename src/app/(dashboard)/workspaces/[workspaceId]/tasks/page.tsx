@@ -7,9 +7,12 @@ const TasksPage = async () => {
    if(!user) redirect("/sign-in");
 
    return (
-   <div className="h-full flex flex-col">
-        <TaskViewSwitcher/>
-    </div>
+      <>
+         <head><title>Jira Clone | My Task</title></head>
+         <div className="h-full flex flex-col">
+            <TaskViewSwitcher/>
+         </div>
+      </>
    );
 };
 

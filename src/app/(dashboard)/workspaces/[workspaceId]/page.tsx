@@ -5,7 +5,12 @@ import { WorkspaceIdClient } from "./client";
 const WorkspaceIdPage = async () => {
     const user = await getCurrent();
     if(!user) redirect("/sign-in");
-    return <WorkspaceIdClient/>
+    return (
+        <>
+            <head><title>Jira Clone | Home</title></head>
+            <WorkspaceIdClient/>
+        </>
+    );
 }
 
 export default WorkspaceIdPage;

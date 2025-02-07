@@ -9,7 +9,12 @@ const ProjectIdPage = async () => {
    if (!user) redirect("/sign-in");
 
 
-   return <ProjectIdClient />
+   return (
+      <>
+         <head><title>Jira Clone | Project</title></head>
+         <ProjectIdClient />
+      </>
+   );
 };
 
 export default ProjectIdPage;

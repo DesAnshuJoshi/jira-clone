@@ -8,7 +8,12 @@ const SignInPage = async () => {
 
     if (user) redirect("/");
 
-    return <SignInCard />
+    return (
+        <>
+            <head><title>Jira Clone | Sign In</title></head>
+            <SignInCard />
+        </>
+    );
 };
 
 export default SignInPage;

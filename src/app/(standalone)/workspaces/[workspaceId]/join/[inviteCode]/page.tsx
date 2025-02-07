@@ -8,7 +8,12 @@ const WorkspaceIdJoinPage = async () => {
     const user = await getCurrent();
     if(!user) redirect("/sign-in");
 
-    return <WorkspaceIdJoinPageClient />
+    return (
+        <>
+            <head><title>Jira Clone | Join Workspace</title></head>
+            <WorkspaceIdJoinPageClient />
+        </>
+    );
 };
 
 export default WorkspaceIdJoinPage;
