@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { registerSchema } from "../schemas";
 import { useRegister } from "../api/use-register";
+import { signUpWithGithub, signUpWithGoogle } from "@/lib/oauth";
 
 export const SignUpCard = () => {
 
@@ -101,11 +102,11 @@ export const SignUpCard = () => {
                 <DottedSeparator />
             </div>
             <CardContent className="p-7 flex flex-col gap-y-4">
-                <Button variant="secondary" size="lg" className="w-full" disabled={isPending}>
+                <Button onClick={() => signUpWithGoogle()} variant="secondary" size="lg" className="w-full" disabled={isPending}>
                     <FcGoogle className="mr-2 size-5" />
                     Signup with Google
                 </Button>
-                <Button variant="secondary" size="lg" className="w-full" disabled={isPending}>
+                <Button onClick={() => signUpWithGithub()} variant="secondary" size="lg" className="w-full" disabled={isPending}>
                     <FaGithub className="mr-2 size-5" />
                     Signup with Github
                 </Button>
