@@ -33,6 +33,7 @@ const app = new Hono()
        }
  
        let uploadedImageUrl: string | undefined;
+       let imageFileId: string | undefined; // New variable to store the file ID
  
        if( image instanceof File ){
            const file = await storage.createFile(
@@ -40,6 +41,7 @@ const app = new Hono()
                ID.unique(),
                image,
            );
+           imageFileId = file.$id; // Save the file ID for later use
  
            const arrayBuffer = await storage.getFilePreview(
                IMAGES_BUCKET_ID,
@@ -56,7 +58,8 @@ const app = new Hono()
            {
                name,
                imageUrl: uploadedImageUrl,
-               workspaceId
+               imageFileId,
+               workspaceId,
            },
        );
  
@@ -156,13 +159,23 @@ const app = new Hono()
       }
 
       let uploadedImageUrl: string | undefined;
+      let newFileId: string | undefined = existingProject.imageFileId;
 
       if( image instanceof File ){
+
+         if (image instanceof File) {
+            if (existingProject.imageFileId) {
+               await storage.deleteFile(IMAGES_BUCKET_ID, existingProject.imageFileId);
+            }
+         }
+
          const file = await storage.createFile(
             IMAGES_BUCKET_ID,
             ID.unique(),
             image,
          );
+
+         newFileId = file.$id;
 
          const arrayBuffer = await storage.getFilePreview(
             IMAGES_BUCKET_ID,
@@ -170,9 +183,21 @@ const app = new Hono()
          );
 
          uploadedImageUrl = `data:image/png;base64,${Buffer.from(arrayBuffer).toString("base64")}`;
+      } else if (image === undefined) {
+         if (existingProject.imageFileId) {
+            await storage.deleteFile(IMAGES_BUCKET_ID, existingProject.imageFileId);
+         }
+         newFileId = undefined;
+         uploadedImageUrl = undefined;
       } else {
          uploadedImageUrl = image;
       }
+
+      console.log("DEBUG: Updating project with:", {
+         name,
+         uploadedImageUrl,
+         newFileId,
+       });
 
       const project= await databases.updateDocument(
          DATABASE_ID,
@@ -180,10 +205,10 @@ const app = new Hono()
          projectId,
          {
             name,
-            imageUrl: uploadedImageUrl,
+            imageUrl: uploadedImageUrl === undefined ? null : uploadedImageUrl,
+            imageFileId: newFileId === undefined ? null : newFileId,
          }
       );
-      console.log({data: project});
       return c.json({data: project});
    } 
 )
