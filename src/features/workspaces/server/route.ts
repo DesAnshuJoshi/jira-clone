@@ -99,6 +99,7 @@ const app = new Hono()
             const { name, image } = c.req.valid("form");
 
             let uploadedImageUrl: string | undefined;
+            let imageFileId: string | undefined;
 
             if (image instanceof File) {
                 const file = await storage.createFile(
@@ -106,6 +107,7 @@ const app = new Hono()
                     ID.unique(),
                     image,
                 ); 
+                imageFileId = file.$id;
 
                 const arrayBuffer = await storage.getFilePreview(
                     IMAGES_BUCKET_ID,
@@ -123,6 +125,7 @@ const app = new Hono()
                     name,
                     userId: user.$id,
                     imageUrl: uploadedImageUrl,
+                    imageFileId,
                     inviteCode: generateInviteCode(6),
                 },
             );
@@ -158,14 +161,27 @@ const app = new Hono()
                 return c.json({error: 'Unauthorized'}, 401);
             }
 
+            const currentWorkspace = await databases.getDocument(
+                DATABASE_ID,
+                WORKSPACES_ID,
+                workspaceId,
+            );
+
+            const existingFileId = currentWorkspace.imageFileId;
             let uploadedImageUrl: string | undefined;
+            let newFileId: string | undefined = existingFileId;
 
             if (image instanceof File) {
+                if(existingFileId){
+                    await storage.deleteFile(IMAGES_BUCKET_ID, existingFileId);
+                }
+
                 const file = await storage.createFile(
                     IMAGES_BUCKET_ID,
                     ID.unique(),
                     image,
-                ); 
+                );
+                newFileId = file.$id; 
 
                 const arrayBuffer = await storage.getFilePreview(
                     IMAGES_BUCKET_ID,
@@ -173,17 +189,25 @@ const app = new Hono()
                 );
 
                 uploadedImageUrl = `data:image/png;base64, ${Buffer.from(arrayBuffer).toString("base64")}`;
+            } else if (image === undefined) {
+                if(existingFileId){
+                    await storage.deleteFile(IMAGES_BUCKET_ID, existingFileId);
+                }
+                newFileId = undefined;
+                uploadedImageUrl = undefined;
             } else {
                 uploadedImageUrl = image;
             }
 
+        
             const workspace = await databases.updateDocument(
                 DATABASE_ID,
                 WORKSPACES_ID,
                 workspaceId,
                 {
                     name,
-                    imageUrl: uploadedImageUrl,
+                    imageUrl: uploadedImageUrl === undefined ? null : uploadedImageUrl,
+                    imageFileId: newFileId === undefined ? null : newFileId,
                 },
             );
 

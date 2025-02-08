@@ -88,13 +88,8 @@ export const EditWorkspaceForm = ({ onCancel, initialValues }: EditWorkspaceForm
 
     const onSubmit = (values: z.infer<typeof updateWorkspaceSchema>) => {
 
-        const finalValues = {
-            ...values,
-            image: values.image instanceof File ? values.image : "",
-        };
-
         mutate({ 
-            form: finalValues, 
+            form: values, 
             param: { workspaceId: initialValues.$id } 
         });
     };
@@ -153,41 +148,47 @@ export const EditWorkspaceForm = ({ onCancel, initialValues }: EditWorkspaceForm
                                 <FormField 
                                     control={form.control} 
                                     name="image" 
-                                    render={({ field }) => (
-                                        <div className="flex flex-col gap-y-2">
-                                            <div className="flex items-center gap-x-5">
-                                                {field.value ? (
-                                                    <div className="size-[72px] relative rounded-md overflow-hidden">
-                                                        <Image src={field.value instanceof File ? URL.createObjectURL(field.value) : field.value} alt="Logo" fill className="object-cover" />
-                                                    </div>
-                                                ) : (
-                                                    <Avatar className="size-[72px]">
-                                                        <AvatarFallback>
-                                                            <ImageIcon className="size-[36px] text-neutral-400" />
-                                                        </AvatarFallback>
-                                                    </Avatar>
-                                                )}
-                                                <div className="flex flex-col">
-                                                    <p className="text-sm">Workspace Icon</p>
-                                                    <p className="text-sm text-muted-foreground">JPG, PNG, SVG, GIF, or JPEG under 1mb</p>
-                                                    <input type="file" className="hidden" accept=".jpg, .png, .svg, .gif, .jpeg" ref={inputRef} disabled={isPending} onChange={handleImageChange} />
-                                                    {field.value ? (
-                                                        <Button type="button" disabled={isPending} variant="destructive" size="xs" className="w-fit mt-2" onClick={() => {
-                                                            field.onChange(null);
-                                                            if(inputRef.current) {
-                                                                inputRef.current.value = "";
+                                    render={
+                                        ({ field }) => {
+                                            const imageValue = form.watch("image");
+                                        
+                                            return (
+                                                <div className="flex flex-col gap-y-2">
+                                                    <div className="flex items-center gap-x-5">
+                                                        {imageValue ? (
+                                                            <div className="size-[72px] relative rounded-md overflow-hidden">
+                                                                <Image src={imageValue instanceof File ? URL.createObjectURL(imageValue) : imageValue} alt="Logo" fill className="object-cover" />
+                                                            </div>
+                                                        ) : (
+                                                            <Avatar className="size-[72px]">
+                                                                <AvatarFallback>
+                                                                    <ImageIcon className="size-[36px] text-neutral-400" />
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                        )}
+                                                        <div className="flex flex-col">
+                                                            <p className="text-sm">Workspace Icon</p>
+                                                            <p className="text-sm text-muted-foreground">JPG, PNG, SVG, GIF, or JPEG under 1mb</p>
+                                                            <input type="file" className="hidden" accept=".jpg, .png, .svg, .gif, .jpeg" ref={inputRef} disabled={isPending} onChange={handleImageChange} />
+                                                            {imageValue ? (
+                                                                <Button type="button" disabled={isPending} variant="destructive" size="xs" className="w-fit mt-2" onClick={() => {
+                                                                    field.onChange(undefined);
+                                                                    if(inputRef.current) {
+                                                                        inputRef.current.value = "";
+                                                                    }
+                                                                }}>
+                                                                    Remove Image
+                                                                </Button>
+                                                                ) : <Button type="button" disabled={isPending} variant="teritary" size="xs" className="w-fit mt-2" onClick={() => inputRef.current?.click()}>
+                                                                        Upload Image
+                                                                    </Button>
                                                             }
-                                                        }}>
-                                                            Remove Image
-                                                        </Button>
-                                                        ) : <Button type="button" disabled={isPending} variant="teritary" size="xs" className="w-fit mt-2" onClick={() => inputRef.current?.click()}>
-                                                                Upload Image
-                                                            </Button>
-                                                    }
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    )}
+                                            );
+                                        }
+                                    }
                                 />
                             </div>
                             <DottedSeparator className="py-7" />
