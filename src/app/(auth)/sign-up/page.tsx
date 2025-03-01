@@ -11,7 +11,7 @@ const SignUpPage = async () => {
 
     return (
         <>
-            <head><title>Jira Clone | Sign Up</title></head>
+            <head><title>TaskFlow | Sign Up</title></head>
             <SignUpCard />
         </>
     );

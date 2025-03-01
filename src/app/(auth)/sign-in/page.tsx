@@ -10,7 +10,7 @@ const SignInPage = async () => {
 
     return (
         <>
-            <head><title>Jira Clone | Sign In</title></head>
+            <head><title>TaskFlow | Sign In</title></head>
             <SignInCard />
         </>
     );

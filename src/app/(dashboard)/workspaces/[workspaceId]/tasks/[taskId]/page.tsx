@@ -9,7 +9,7 @@ const TaskIdPage = async () => {
 
    return (
       <>
-         <head><title>Jira Clone | Task Details</title></head>
+         <head><title>TaskFlow | Task Details</title></head>
          <TaskIdClient/>
       </>
    );

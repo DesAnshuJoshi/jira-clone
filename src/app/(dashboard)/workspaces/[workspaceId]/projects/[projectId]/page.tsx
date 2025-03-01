@@ -11,7 +11,7 @@ const ProjectIdPage = async () => {
 
    return (
       <>
-         <head><title>Jira Clone | Project</title></head>
+         <head><title>TaskFlow | Project</title></head>
          <ProjectIdClient />
       </>
    );
