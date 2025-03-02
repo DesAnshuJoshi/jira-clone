@@ -10,7 +10,7 @@ const WorkspaceIdJoinPage = async () => {
 
     return (
         <>
-            <head><title>Jira Clone | Join Workspace</title></head>
+            <head><title>TaskFlow | Join Workspace</title></head>
             <WorkspaceIdJoinPageClient />
         </>
     );

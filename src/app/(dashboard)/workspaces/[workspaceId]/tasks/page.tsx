@@ -8,7 +8,7 @@ const TasksPage = async () => {
 
    return (
       <>
-         <head><title>Jira Clone | My Task</title></head>
+         <head><title>TaskFlow | My Task</title></head>
          <div className="h-full flex flex-col">
             <TaskViewSwitcher/>
          </div>

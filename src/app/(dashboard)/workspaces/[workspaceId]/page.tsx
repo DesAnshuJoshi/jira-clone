@@ -7,7 +7,7 @@ const WorkspaceIdPage = async () => {
     if(!user) redirect("/sign-in");
     return (
         <>
-            <head><title>Jira Clone | Home</title></head>
+            <head><title>TaskFlow | Home</title></head>
             <WorkspaceIdClient/>
         </>
     );

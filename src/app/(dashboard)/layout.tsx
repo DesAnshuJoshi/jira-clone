@@ -12,7 +12,7 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     return ( 
         <>
-        <head><title>Jira Clone | Home</title></head>
+        <head><title>TaskFlow | Home</title></head>
             <div className="min-h-screen">
                 <CreateWorkspaceModal />
                 <CreateProjectModal />
