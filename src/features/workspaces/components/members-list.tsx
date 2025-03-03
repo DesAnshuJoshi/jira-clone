@@ -15,6 +15,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
 import { useDeleteMember } from "@/features/members/api/use-delete-member";
 import { useUpdateMember } from "@/features/members/api/use-update-member";
+import { Badge } from "@/components/ui/badge";
 
 export const MembersList = () => {
     const workspaceId = useWorkspaceId();
@@ -80,8 +81,19 @@ export const MembersList = () => {
                                         fallbackClassName="text-lg"
                                         name={member.name}  />
                                 
-                                <div className="flex flex-col">
+                                {/* <div className="flex flex-col">
                                     <p className="text-sm font-medium">{member.name}</p>
+                                    <p className="text-xs text-muted-foreground">{member.email}</p>
+                                </div> */}
+                                <div className="flex flex-col">
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-sm font-medium">{member.name}</p>
+                                        {member.role === MemberRole.ADMIN && (
+                                            <Badge className="bg-blue-500 text-white px-2 py-0.5 text-xs rounded-md">
+                                                Admin
+                                            </Badge>
+                                        )}
+                                    </div>
                                     <p className="text-xs text-muted-foreground">{member.email}</p>
                                 </div>
                                 <DropdownMenu>

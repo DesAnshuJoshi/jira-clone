@@ -80,6 +80,10 @@ const app = new Hono()
             userId: user.$id
         });
 
+        if(MemberRole.ADMIN){
+            return c.json({error: "Cannot delete adminstrator"}, 401);
+        }
+
         if(!member){
             return c.json({error: "Unauthorized"}, 401);
         }
