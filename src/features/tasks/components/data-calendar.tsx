@@ -1,19 +1,8 @@
 import {  useState } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-
 import { enUS } from "date-fns/locale";
-
-import { 
-   addMonths, 
-   format, 
-   getDay, 
-   parse, 
-   startOfWeek, 
-   subMonths 
-} from "date-fns";
-
+import { addMonths, format, getDay, parse, startOfWeek, subMonths } from "date-fns";
 import { Task } from "../types";
-
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import "./data-calendar.css"
 import { EventCard } from "./event-card";
@@ -80,10 +69,6 @@ export const DataCalendar = ({
       return {};
    };
    
-   
-
-
-
    return(
       <div>
          <Calendar

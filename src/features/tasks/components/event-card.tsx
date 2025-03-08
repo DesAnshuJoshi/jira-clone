@@ -1,5 +1,4 @@
 import { Project } from "@/features/projects/types";
-
 import { TaskStatus } from "../types";
 import { cn } from "@/lib/utils";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
