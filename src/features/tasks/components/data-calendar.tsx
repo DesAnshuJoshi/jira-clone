@@ -43,6 +43,8 @@ export const DataCalendar = ({
 		data.length > 0 ? new Date(data[0].dueDate) : new Date()
 	);
 
+   const today = new Date(); //get today's date
+
    const events = data.map((task) => ({
       start: new Date(task.dueDate),
       end: new Date(task.dueDate),
@@ -62,6 +64,25 @@ export const DataCalendar = ({
          setValue(new Date());
       }
    };
+
+   // Function to highlight today's date
+   const dayPropGetter = (date: Date) => {
+      const today = new Date();
+   
+      if (
+         date.getDate() === today.getDate() &&
+         date.getMonth() === today.getMonth() &&
+         date.getFullYear() === today.getFullYear()
+      ) {
+         return {
+            className: "rbc-today-cell",
+         };
+      }
+   
+      return {};
+   };
+   
+   
 
 
 
@@ -96,6 +117,7 @@ export const DataCalendar = ({
                   <CustomToolbar date={value} onNavigate={handleNavigate}/>
                )
             }}
+            dayPropGetter={dayPropGetter}
          />
       </div>
    );

@@ -16,16 +16,17 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
-        [TaskStatus.TODO]:
-          "border-transparent bg-red-400 text-primary-foreground hover:bg-red-400/80",
-        [TaskStatus.IN_PROGRESS]:
-          "border-transparent bg-yellow-400 text-primary-foreground hover:bg-yellow-400/80",
-        [TaskStatus.IN_REVIEW]:
-          "border-transparent bg-blue-400 text-primary-foreground hover:bg-blue-400/80",
-        [TaskStatus.BACKLOG]:
-          "border-transparent bg-zinc-400 text-primary-foreground hover:bg-zinc-400/80",
-        [TaskStatus.DONE]:
-          "border-transparent bg-green-500 text-primary-foreground hover:bg-green-500/80",
+        [TaskStatus.TODO]: 
+          "border-transparent bg-rose-500 text-white hover:bg-rose-500/80", // More vibrant red
+        [TaskStatus.IN_PROGRESS]: 
+          "border-transparent bg-amber-500 text-white hover:bg-amber-500/80", // Bright orange for progress
+        [TaskStatus.IN_REVIEW]: 
+          "border-transparent bg-sky-500 text-white hover:bg-sky-500/80", // Softer blue for reviews
+        [TaskStatus.BACKLOG]: 
+          "border-transparent bg-gray-500 text-white hover:bg-gray-500/80", // Neutral but clear backlog
+        [TaskStatus.DONE]: 
+          "border-transparent bg-emerald-500 text-white hover:bg-emerald-500/80", // Fresh green for completion
+
       },
     },
     defaultVariants: {

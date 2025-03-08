@@ -39,3 +39,9 @@
  .rbc-off-range-bg {
     /* background: inherit; */
  }
+
+ .rbc-today-cell {
+   background-color: rgba(59, 130, 246, 0.2) !important; /* Light blue background */
+   border-radius: 6px !important; /* Slightly rounded edges */
+   border: 1px solid rgba(59, 130, 246, 0.3) !important; /* Soft border */
+}
