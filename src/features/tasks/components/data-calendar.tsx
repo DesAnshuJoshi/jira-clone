@@ -43,8 +43,6 @@ export const DataCalendar = ({
 		data.length > 0 ? new Date(data[0].dueDate) : new Date()
 	);
 
-   const today = new Date(); //get today's date
-
    const events = data.map((task) => ({
       start: new Date(task.dueDate),
       end: new Date(task.dueDate),
